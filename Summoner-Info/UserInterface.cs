@@ -19,7 +19,8 @@ namespace Summoner_Info
 
         private void retrieveInput_Click(object sender, EventArgs e)
         {
-            PythonTest.test();
+            //MessageBox.Show(PythonTest.test());
+            PythonTest.test2();
         }
 
     }
