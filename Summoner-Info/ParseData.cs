@@ -23,6 +23,5 @@ namespace Summoner_Info
 
     class ParseData
     {
-        public static 
     }
 }
