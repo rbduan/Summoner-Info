@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Summoner_Info
 {
-    struct SummonerInfo
+    struct SingleGameInfo
     {
         string username;
 
