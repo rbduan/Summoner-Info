@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace Summoner_Info
 {
@@ -19,8 +20,8 @@ namespace Summoner_Info
 
         private void retrieveInput_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show(PythonTest.test());
-            PythonTest.test2();
+            RiotAPIQuery.getInfoFromServer(nameInput.Text);
+            Debug.WriteLine(nameInput.Text);
         }
 
     }

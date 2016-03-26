@@ -78,7 +78,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PythonTest.cs" />
+    <Compile Include="ParseData.cs" />
+    <Compile Include="RiotAPIQuery.cs" />
     <Compile Include="UserInterface.cs">
       <SubType>Form</SubType>
     </Compile>
