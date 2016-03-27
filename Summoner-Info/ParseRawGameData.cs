@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,8 +41,8 @@ namespace Summoner_Info
 
             info += "Champion Played:   " + champPlayed +"\n";
             info += "K/D/A:   " + kills + "/" + deaths + "/" + assists + "\n";
-            info += "CS per minute:   " + csPerMin + "\n";
-            info += "EXP per minute:   " + expPerMin + "\n";
+            info += "CS per minute:   " + csPerMin.ToString("N1") + "\n";
+            info += "EXP per minute:   " + expPerMin.ToString("N1") + "\n";
             info += "Wards placed:   " + wardsPlaced + "\n";
 
             return info;
@@ -51,50 +52,197 @@ namespace Summoner_Info
     class ParseRawGameData
     {
 
-        public static Collection<SingleGameInfo> ParseJSonTextFile(string path)
+        public static Collection<SingleGameInfo> ParseJSonTextFile(string name)
         {
-            Collection<SingleGameInfo> sample = new Collection<SingleGameInfo>();
+            Collection<SingleGameInfo> games = new Collection<SingleGameInfo>();
+            String path = "" + Environment.CurrentDirectory + "\\" + name + ".txt";
 
-            for(int i = 0; i < 6; i++)
+            //while loop that parses the .txt file looking for string attributes and their associated values
+
+            String allText = System.IO.File.ReadAllText(path);
+
+            char[] separatingChars = { '^' };
+
+            String[] indivGames = allText.Split(separatingChars); //array of strings where every element is a single game, hopefully with a single player only
+
+
+            foreach(string game in indivGames) //parse each game string
             {
-                SingleGameInfo temp = new SingleGameInfo();
+                SingleGameInfo tempGame = new SingleGameInfo();
 
-                temp.gameVictory = true;
-                temp.kills = i;
-                temp.deaths = i + 1;
-                temp.assists = i + 2;
-                temp.rolePlayed = "SOLO";
-                temp.csPerMin = i * 5;
-                temp.expPerMin = i * 10;
-                temp.wardsPlaced = i + 2;
-                temp.gameDurationInSeconds = 2000;
-                temp.firstDrag = false;
-                temp.champPlayed = 1;
+                tempGame.kills = getKills(game);
+                tempGame.deaths = getDeaths(game);
+                tempGame.assists = getAssists(game);
+                tempGame.rolePlayed = getRolePlayed(game);
+                tempGame.gameVictory = matchVictory(game);
+                tempGame.wardsPlaced = getTotalWardsPlaced(game);
+                tempGame.gameDurationInSeconds = getMatchDurationInSeconds(game);
+                tempGame.firstDrag = firstDrag(game);
+                tempGame.csPerMin = getCsPerMinute(game);
+                tempGame.expPerMin = getExpPerMinute(game);
+                tempGame.champPlayed = getChampPlayed(game);
 
-                sample.Add(temp);
-
+                games.Add(tempGame);
             }
 
-            for (int i = 0; i < 3; i++)
-            {
-                SingleGameInfo temp = new SingleGameInfo();
-
-                temp.gameVictory = false;
-                temp.kills = i;
-                temp.deaths = i + 1;
-                temp.assists = i + 2;
-                temp.rolePlayed = "DUO";
-                temp.csPerMin = i * 5;
-                temp.expPerMin = i * 10;
-                temp.wardsPlaced = i + 2;
-                temp.gameDurationInSeconds = 2000;
-                temp.firstDrag = true;
-                temp.champPlayed = 2;
-
-                sample.Add(temp);
-            }
-
-            return sample;
+            return games;
         }
+
+        private static double getKills(string matchInfo)
+        {
+            double kills = 0;
+
+            int textPosition = matchInfo.IndexOf("\"kills\"") + 9;
+            kills = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return kills;
+        }
+
+        private static double getDeaths(string matchInfo)
+        {
+            double deaths = 0;
+
+            int textPosition = matchInfo.IndexOf("\"deaths\"") + 10;
+            deaths = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return deaths;
+        }
+
+        private static double getAssists(string matchInfo)
+        {
+            double assists = 0;
+
+            int textPosition = matchInfo.IndexOf("\"assists\"") + 11;
+            assists = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return assists;
+        }
+
+        private static double getTotalWardsPlaced(string matchInfo)
+        {
+            double wards = 0;
+
+            int textPosition = matchInfo.IndexOf("\"wardsPlaced\"") + 15;
+            wards = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return wards;
+        }
+
+        private static int getMatchDurationInSeconds(string matchInfo)
+        {
+            int duration = 0;
+
+            int textPosition = matchInfo.IndexOf("\"matchDuration\"") + 17;
+            duration = Int32.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return duration;
+        }
+
+        private static string getRolePlayed(string matchInfo)
+        {
+            string role = "";
+
+            int textPosition = matchInfo.IndexOf("\"role\"") + 9;
+            role = matchInfo.Substring(textPosition, matchInfo.IndexOf("\"", textPosition) - textPosition);
+
+            return role;
+        }
+
+        private static bool matchVictory(string matchInfo)
+        {
+            bool victory;
+
+            int textPosition = matchInfo.IndexOf("\"winner\"") + 10;
+            victory = Boolean.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return victory;
+        }
+
+        private static bool firstDrag(string matchInfo)
+        {
+            bool drag;
+
+            int textPosition = matchInfo.IndexOf("\"firstDragon\"") + 15;
+            drag = Boolean.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+
+            return drag;
+        }
+
+        private static double getCsPerMinute(string matchInfo)
+        {
+            List<Double> CsPerMin  = new List<Double>();
+
+            int beginPosition = matchInfo.IndexOf("\"creepsPerMinDeltas\"");
+            int endPosition = matchInfo.IndexOf("}", beginPosition);
+
+            int stringPointer = beginPosition;
+
+            while(stringPointer < endPosition)
+            {
+                int num;
+                if(Int32.TryParse("" + matchInfo.ElementAt(stringPointer), out num))
+                {
+                    int endDelimiter = matchInfo.IndexOf(",", stringPointer);
+
+                    if(endDelimiter < endPosition)
+                        CsPerMin.Add(Double.Parse(matchInfo.Substring(stringPointer, endDelimiter - stringPointer)));
+                    else
+                        CsPerMin.Add(Double.Parse(matchInfo.Substring(stringPointer, endPosition - stringPointer)));
+
+                    stringPointer = endDelimiter;
+                }
+                stringPointer++;
+            }
+
+            double average = CsPerMin.Average();
+
+            return average;
+        }
+
+        private static double getExpPerMinute(string matchInfo)
+        {
+            List<Double> ExpPerMin = new List<Double>();
+
+            int beginPosition = matchInfo.IndexOf("\"xpPerMinDeltas\"");
+            int endPosition = matchInfo.IndexOf("}", beginPosition);
+
+            int stringPointer = beginPosition;
+
+            while (stringPointer < endPosition)
+            {
+                int num;
+                if (Int32.TryParse("" + matchInfo.ElementAt(stringPointer), out num))
+                {
+                    int endDelimiter = matchInfo.IndexOf(",", stringPointer);
+
+                    if (endDelimiter < endPosition)
+                        ExpPerMin.Add(Double.Parse(matchInfo.Substring(stringPointer, endDelimiter - stringPointer)));
+                    else
+                        ExpPerMin.Add(Double.Parse(matchInfo.Substring(stringPointer, endPosition - stringPointer)));
+
+                    stringPointer = endDelimiter;
+                }
+                stringPointer++;
+            }
+
+            double average = ExpPerMin.Average();
+
+            return average;
+        }
+
+        private static int getChampPlayed(string matchInfo)
+        {
+            int champion;
+
+            int banPosition = matchInfo.IndexOf("\"bans\"");
+            string noBans = matchInfo.Remove(banPosition, matchInfo.IndexOf("]", banPosition) - banPosition);
+
+            int textPosition = matchInfo.IndexOf("\"championId\"") + 14;
+            champion = Int32.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf("}", textPosition) - textPosition));
+
+            return champion;
+
+        }
+
     }
 }

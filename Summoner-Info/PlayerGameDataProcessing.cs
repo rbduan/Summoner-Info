@@ -87,7 +87,7 @@ namespace Summoner_Info
 
         public string getAvgKDA()
         {
-            return "" + getAvgKills() + "/" + getAvgDeaths() + "/" + getAvgAssists();
+            return "" + getAvgKills().ToString("N1") + "/" + getAvgDeaths().ToString("N1") + "/" + getAvgAssists().ToString("N1");
         }
 
         public double getWinrate()

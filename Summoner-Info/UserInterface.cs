@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Summoner_Info
 {
@@ -23,6 +24,9 @@ namespace Summoner_Info
             string name = nameInput.Text;
 
             RiotAPIQuery.getInfoFromServer(name);
+
+            ////////PLEASE REPLACE LATER
+            Thread.Sleep(45000);
 
             PlayerGameDataProcessing singlePlayer = new PlayerGameDataProcessing(ParseRawGameData.ParseJSonTextFile(name), name);
 
@@ -48,9 +52,9 @@ namespace Summoner_Info
             playerData += "Winrate: " + player.getWinrate().ToString("N1") + "%\n";
             playerData += "Average K/D/A: " + player.getAvgKDA() + "\n";
             playerData += "Most frequent role: " + player.getMostFrequentRole() + "\n";
-            playerData += "Average CS/minute: " + player.getAvgCsPerMinute() + "\n";
-            playerData += "Average EXP/minute: " + player.getAvgExpPerMinute() + "\n";
-            playerData += "Average Wards/minute: " + player.getAvgWardsPerMinute() + "\n";
+            playerData += "Average CS/minute: " + player.getAvgCsPerMinute().ToString("N1") + "\n";
+            playerData += "Average EXP/minute: " + player.getAvgExpPerMinute().ToString("N1") + "\n";
+            playerData += "Average Wards/minute: " + player.getAvgWardsPerMinute().ToString("N1") + "\n";
             playerData += "First Dragon Rate: " + player.getFirstDragonRate().ToString("N1") + "%\n";
             playerData += "Number of different champions played: " + player.getNumberOfDifferentChamps() + "\n\n\n";
 

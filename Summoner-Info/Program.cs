@@ -6,6 +6,7 @@ using System.Windows.Forms;
 
 namespace Summoner_Info
 {
+
     static class Program
     {
         /// <summary>
