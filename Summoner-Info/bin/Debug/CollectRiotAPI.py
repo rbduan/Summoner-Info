@@ -103,9 +103,9 @@ def loop(write_file, sid):
 
 def main(initial_mid_index=0):
     try:
+        ingamename = sys.argv[1].lower()
         write_file = open(ingamename + '.txt', 'a') #output file
         write_file.write('^')
-        ingamename = sys.argv[1].lower()
         sid = nameToData(ingamename)
         loop(write_file, sid) #player
         
