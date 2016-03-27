@@ -42,29 +42,72 @@ def nameToData(ingamename):
     sid = getFirstId(ingamename)
     mid_set = getRecentGames(sid)['matches']
     addMatchIdToData(mid_set)
+    return sid
 
-def loop(write_file, ingamename):
+def loop(write_file, sid):
     global mid_index
     try:
         while mid_index<len(global_mid_list):
-            
-            write_file.write(json.dumps(getMatchData(mid_index)))
-            write_file.write('\n')
-            mid_index += 1
+            num=0
+            match = getMatchData(mid_index)
+            partId = 0
+            teamId = 0
+            partValue = ''
+            teamValue = ''
+            for partIdentities in match['participantIdentities']:
+                if partIdentities['player']['summonerId'] == sid:
+                    partId = partIdentities['participantId']
+                    
+##            while True:
+##                if len(match['participants']) == 1:
+##                    break
+##                popped = False
+##                if match['participants'][0]['participantId'] == partId:
+##                    popped = True
+##                if popped:
+##                    del match['participants'][1]
+##                else:
+##                    del match['participants'][0]
+            for part in match['participants']:
+                if part['participantId'] == partId:
+                    partValue = part
+                    teamId = part['teamId']
+            del match['participants'][:]
+            match['participants'].append(partValue)
 
+            for part in match['participantIdentities']:
+                if part['participantId'] == partId:
+                    partValue = part
+            del match['participantIdentities'][:]
+            match['participantIdentities'].append(partValue)
+
+            for team in match['teams']:
+                if team['teamId'] == teamId:
+                    teamValue = team
+            del match['teams'][:]
+            match['teams'].append(teamValue)
+            
+            write_file.write(json.dumps(match))
+            if mid_index==len(global_mid_list)-1:
+                write_file.write('\n');
+            else:
+                write_file.write('\n^')
+            mid_index += 1
+        
     except KeyError:
         print("Key Error")
         time.sleep(15)
         mid_index +=1
-        loop(write_file, ingamename)
+        loop(write_file, sid)
         
 
 def main(initial_mid_index=0):
     try:
-        write_file = open('RiotTemp.txt', 'a') #output file
+        write_file = open(ingamename + '.txt', 'a') #output file
+        write_file.write('^')
         ingamename = sys.argv[1].lower()
-        nameToData(ingamename)
-        loop(write_file, ingamename) #player
+        sid = nameToData(ingamename)
+        loop(write_file, sid) #player
         
     
     except IndexError:

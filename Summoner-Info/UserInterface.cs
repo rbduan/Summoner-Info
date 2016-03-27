@@ -20,8 +20,44 @@ namespace Summoner_Info
 
         private void retrieveInput_Click(object sender, EventArgs e)
         {
-            RiotAPIQuery.getInfoFromServer(nameInput.Text);
-            Debug.WriteLine(nameInput.Text);
+            string name = nameInput.Text;
+
+            RiotAPIQuery.getInfoFromServer(name);
+
+            PlayerGameDataProcessing singlePlayer = new PlayerGameDataProcessing(ParseRawGameData.ParseJSonTextFile(name), name);
+
+            string playerData = buildPlayerDataString(singlePlayer);
+
+            DialogResult results = MessageBox.Show(playerData, "Player Info", MessageBoxButtons.YesNo);
+
+            if (results == DialogResult.Yes)
+            {
+                ScrollableMessageBox matchHistory = new ScrollableMessageBox();
+                matchHistory.Show(singlePlayer.getAllGamesInformation(), name + "'s Match History");
+            }
+            else { }
+             
+        }
+
+        private string buildPlayerDataString(PlayerGameDataProcessing player)
+        {
+            string user = player.Username;
+            string playerData = "";
+
+            playerData += "Here are some cumulative stats from " + user + "'s last " + player.getTotalGames() + " ranked games: \n\n";
+            playerData += "Winrate: " + player.getWinrate().ToString("N1") + "%\n";
+            playerData += "Average K/D/A: " + player.getAvgKDA() + "\n";
+            playerData += "Most frequent role: " + player.getMostFrequentRole() + "\n";
+            playerData += "Average CS/minute: " + player.getAvgCsPerMinute() + "\n";
+            playerData += "Average EXP/minute: " + player.getAvgExpPerMinute() + "\n";
+            playerData += "Average Wards/minute: " + player.getAvgWardsPerMinute() + "\n";
+            playerData += "First Dragon Rate: " + player.getFirstDragonRate().ToString("N1") + "%\n";
+            playerData += "Number of different champions played: " + player.getNumberOfDifferentChamps() + "\n\n\n";
+
+            playerData += "Would you like to view more detailed statistics for each game?\n";
+
+
+            return playerData;
         }
 
     }
