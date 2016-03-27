@@ -19,8 +19,9 @@ namespace Summoner_Info
 
         public void Show(string text, string caption)
         {
-            ScrollableMessage.Text = text;
+            ScrollableMessage.Text = text.Replace("\n", Environment.NewLine);
             this.Text = caption;
+            ScrollableMessage.Select(0, 0);
             this.ShowDialog();
         }
 
