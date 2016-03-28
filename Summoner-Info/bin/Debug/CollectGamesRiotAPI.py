@@ -1,4 +1,4 @@
-from RiotAPI import RiotAPI
+from RiotAPIGames import RiotAPI
 from collections import OrderedDict
 import time
 import json
@@ -23,13 +23,13 @@ def getRecentGames(summid):
 def addMatchIdToData(mid_set):
     global global_mid_list
     for match in mid_set:
- #       if match['queue'] == 'TEAM_BUILDER_DRAFT_RANKED_5x5':
-        global_mid_list.append(match['matchId'])
+#        if match['subType'] == 'RANKED_SOLO_5x5':
+        global_mid_list.append(match['gameId'])
     global_mid_list = list(OrderedDict.fromkeys(global_mid_list))
 
 def getMatchData(mid_index):
     match = api.get_match(global_mid_list[mid_index])[0]
-    getSummId(match)
+#    getSummId(match)
     return match
 
 def getSummId(match):
@@ -40,23 +40,23 @@ def getSummId(match):
 
 def nameToData(ingamename):
     sid = getFirstId(ingamename)
-    mid_set = getRecentGames(sid)['matches']
+    mid_set = getRecentGames(sid)['games']
     addMatchIdToData(mid_set)
     return sid
 
 def loop(write_file, sid):
     global mid_index
     try:
-        while mid_index<len(global_mid_list):
-            num=0
-            match = getMatchData(mid_index)
-            partId = 0
-            teamId = 0
-            partValue = ''
-            teamValue = ''
-            for partIdentities in match['participantIdentities']:
-                if partIdentities['player']['summonerId'] == sid:
-                    partId = partIdentities['participantId']
+#        while mid_index<len(global_mid_list):
+#            num=0
+#            match = getMatchData(mid_index)
+#            partId = 0
+#            teamId = 0
+#            partValue = ''
+#            teamValue = ''
+#            for partIdentities in match['participantIdentities']:
+#                if partIdentities['player']['summonerId'] == sid:
+#                    partId = partIdentities['participantId']
                     
 ##            while True:
 ##                if len(match['participants']) == 1:
@@ -68,42 +68,42 @@ def loop(write_file, sid):
 ##                    del match['participants'][1]
 ##                else:
 ##                    del match['participants'][0]
-            for part in match['participants']:
-                if part['participantId'] == partId:
-                    partValue = part
-                    teamId = part['teamId']
-            del match['participants'][:]
-            match['participants'].append(partValue)
+#            for part in match['participants']:
+#                if part['participantId'] == partId:
+#                    partValue = part
+#                    teamId = part['teamId']
+#            del match['participants'][:]
+#            match['participants'].append(partValue)
 
-            for part in match['participantIdentities']:
-                if part['participantId'] == partId:
-                    partValue = part
-            del match['participantIdentities'][:]
-            match['participantIdentities'].append(partValue)
+#            for part in match['participantIdentities']:
+#                if part['participantId'] == partId:
+#                    partValue = part
+#            del match['participantIdentities'][:]
+#            match['participantIdentities'].append(partValue)
 
-            for team in match['teams']:
-                if team['teamId'] == teamId:
-                    teamValue = team
-            del match['teams'][:]
-            match['teams'].append(teamValue)
+#            for team in match['teams']:
+#                if team['teamId'] == teamId:
+#                    teamValue = team
+#            del match['teams'][:]
+#            match['teams'].append(teamValue)
             
-            write_file.write(json.dumps(match))
-            if mid_index==len(global_mid_list)-1:
-                write_file.write('\n');
-            else:
-                write_file.write('\n^')
-            mid_index += 1
+        write_file.write(json.dumps(global_mid_list)) #match))
+#            if mid_index==len(global_mid_list)-1:
+#                write_file.write('\n');
+#            else:
+#                write_file.write('\n^')
+#            mid_index += 1
         
     except KeyError:
         print("Key Error")
         time.sleep(15)
         mid_index +=1
         loop(write_file, sid)
-        
 
+        
 def main(initial_mid_index=0):
     try:
-        ingamename = sys.argv[1].lower()
+        ingamename = 'konsonance' #sys.argv[1].lower()
         write_file = open(ingamename + '.txt', 'a') #output file
 #        write_file.write('^')
         sid = nameToData(ingamename)

@@ -70,6 +70,12 @@ namespace Summoner_Info
             {
                 SingleGameInfo tempGame = new SingleGameInfo();
 
+                //get game type
+
+                //switch -> call parser based on game type
+                //use enum for game type
+
+
                 tempGame.kills = getKills(game);
                 tempGame.deaths = getDeaths(game);
                 tempGame.assists = getAssists(game);

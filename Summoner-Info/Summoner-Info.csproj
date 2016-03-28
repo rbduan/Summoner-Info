@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JSONDeserializer.cs" />
     <Compile Include="PlayerGameDataProcessing.cs" />
     <Compile Include="ParseRawGameData.cs" />
     <Compile Include="RiotAPIQuery.cs" />
