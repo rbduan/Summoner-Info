@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,25 +24,37 @@ namespace Summoner_Info
         private void retrieveInput_Click(object sender, EventArgs e)
         {
             string name = nameInput.Text;
+            string filepath = "" + Environment.CurrentDirectory + "\\" + name + ".txt";
 
-            RiotAPIQuery.getInfoFromServer(name);
-
-            ////////PLEASE REPLACE LATER
-            Thread.Sleep(45000);
-
-            PlayerGameDataProcessing singlePlayer = new PlayerGameDataProcessing(ParseRawGameData.ParseJSonTextFile(name), name);
-
-            string playerData = buildPlayerDataString(singlePlayer);
-
-            DialogResult results = MessageBox.Show(playerData, "Player Info", MessageBoxButtons.YesNo);
-
-            if (results == DialogResult.Yes)
+            if (File.Exists(filepath))
+                ;
+            else
             {
-                ScrollableMessageBox matchHistory = new ScrollableMessageBox();
-                matchHistory.Show(singlePlayer.getAllGamesInformation(), name + "'s Match History");
+                RiotAPIQuery.getInfoFromServer(name);
+                ////////PLEASE REPLACE LATER
+                Thread.Sleep(45000);
             }
-            else { }
-             
+
+            if(new FileInfo(filepath).Length == 0)
+                MessageBox.Show("No Ranked Data available for " + name + "\n", "Player Info", MessageBoxButtons.OK);
+            else
+            {
+                Collection<SingleGameInfo> playerGames = ParseRawGameData.ParseJSonTextFile(name);
+
+                PlayerGameDataProcessing singlePlayer = new PlayerGameDataProcessing(playerGames, name);
+
+                string playerData = buildPlayerDataString(singlePlayer);
+
+                DialogResult results = MessageBox.Show(playerData, "Player Info", MessageBoxButtons.YesNo);
+
+                if (results == DialogResult.Yes)
+                {
+                    ScrollableMessageBox matchHistory = new ScrollableMessageBox();
+                    matchHistory.Show(singlePlayer.getAllGamesInformation(), name + "'s Match History");
+                }
+                else { }
+            }            
+
         }
 
         private string buildPlayerDataString(PlayerGameDataProcessing player)

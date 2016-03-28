@@ -90,50 +90,35 @@ namespace Summoner_Info
 
         private static double getKills(string matchInfo)
         {
-            double kills = 0;
-
-            int textPosition = matchInfo.IndexOf("\"kills\"") + 9;
-            kills = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            double kills = Double.Parse(getValue("\"kills\"", matchInfo));
 
             return kills;
         }
 
         private static double getDeaths(string matchInfo)
         {
-            double deaths = 0;
-
-            int textPosition = matchInfo.IndexOf("\"deaths\"") + 10;
-            deaths = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            double deaths = Double.Parse(getValue("\"deaths\"", matchInfo));
 
             return deaths;
         }
 
         private static double getAssists(string matchInfo)
         {
-            double assists = 0;
-
-            int textPosition = matchInfo.IndexOf("\"assists\"") + 11;
-            assists = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            double assists = Double.Parse(getValue("\"deaths\"", matchInfo));
 
             return assists;
         }
 
         private static double getTotalWardsPlaced(string matchInfo)
         {
-            double wards = 0;
-
-            int textPosition = matchInfo.IndexOf("\"wardsPlaced\"") + 15;
-            wards = Double.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            double wards = Double.Parse(getValue("\"wardsPlaced\"", matchInfo));
 
             return wards;
         }
 
         private static int getMatchDurationInSeconds(string matchInfo)
         {
-            int duration = 0;
-
-            int textPosition = matchInfo.IndexOf("\"matchDuration\"") + 17;
-            duration = Int32.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            int duration = Int32.Parse(getValue("\"matchDuration\"", matchInfo));
 
             return duration;
         }
@@ -150,22 +135,26 @@ namespace Summoner_Info
 
         private static bool matchVictory(string matchInfo)
         {
-            bool victory;
-
-            int textPosition = matchInfo.IndexOf("\"winner\"") + 10;
-            victory = Boolean.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            bool victory = Boolean.Parse(getValue("\"winner\"", matchInfo));
 
             return victory;
         }
 
         private static bool firstDrag(string matchInfo)
         {
-            bool drag;
-
-            int textPosition = matchInfo.IndexOf("\"firstDragon\"") + 15;
-            drag = Boolean.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf(",", textPosition) - textPosition));
+            bool drag = Boolean.Parse(getValue("\"firstDragon\"", matchInfo));
 
             return drag;
+        }
+
+        private static int getChampPlayed(string matchInfo)
+        {
+            int banPosition = matchInfo.IndexOf("\"bans\"");
+            string noBans = matchInfo.Remove(banPosition, matchInfo.IndexOf("]", banPosition) - banPosition);
+
+            int champion = Int32.Parse(getValue("\"championId\"", noBans));
+
+            return champion;
         }
 
         private static double getCsPerMinute(string matchInfo)
@@ -230,18 +219,24 @@ namespace Summoner_Info
             return average;
         }
 
-        private static int getChampPlayed(string matchInfo)
+        private static string getValue(string valueToFind, string dataString)
         {
-            int champion;
+            string value = "";
 
-            int banPosition = matchInfo.IndexOf("\"bans\"");
-            string noBans = matchInfo.Remove(banPosition, matchInfo.IndexOf("]", banPosition) - banPosition);
+            int textPosition = dataString.IndexOf(" ", dataString.IndexOf(valueToFind));
 
-            int textPosition = matchInfo.IndexOf("\"championId\"") + 14;
-            champion = Int32.Parse(matchInfo.Substring(textPosition, matchInfo.IndexOf("}", textPosition) - textPosition));
+            int comma = dataString.IndexOf(",", textPosition);
+            int endBracket = dataString.IndexOf("}", textPosition);
 
-            return champion;
+            if (comma == -1)
+                comma = 99999;
+            else if (endBracket == -1)
+                endBracket = 99999;
+            int endDelimiter = Math.Min(comma, endBracket);
 
+            value = dataString.Substring(textPosition, endDelimiter - textPosition);
+
+            return value;
         }
 
     }
