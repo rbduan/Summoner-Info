@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="JSONDeserializer.cs" />
-    <Compile Include="matchData.cs" />
+    <Compile Include="rawMatchData.cs" />
     <Compile Include="PlayerGameDataProcessing.cs" />
     <Compile Include="ParseRawGameData.cs" />
     <Compile Include="RiotAPIQuery.cs" />

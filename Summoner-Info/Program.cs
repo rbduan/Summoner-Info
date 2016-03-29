@@ -21,7 +21,8 @@ namespace Summoner_Info
 
             //test code for random stuff
 
-            
+            RiotAPIQuery.getMatchesByDictionary(RiotAPIQuery.getRecentMatchlistByName("swag4lyfe"));
+
 
         }
     }

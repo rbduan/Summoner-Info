@@ -11,25 +11,24 @@ namespace Summoner_Info
 {
     class JSONDeserializer
     {
-        public static Collection<rawMatchData> DeserializeMatchesFromJSonFile(string path)
+        public static rawMatchData getMatchObjectFromJSonFileByPath(string path)
         {
-            Collection<rawMatchData> matches = new Collection<rawMatchData>();
-
             String json = System.IO.File.ReadAllText(path);
 
-            char[] separatingChars = { '^' };
+            rawMatchData match = JsonConvert.DeserializeObject<rawMatchData>(json);
 
-            String[] indivMatches = json.Split(separatingChars); //array of strings where every element is a single game, hopefully with a single player only
+            return match;
+        }
 
+        public static rawMatchData getMatchObjectFromJSonFileById(int id)
+        {
+            string filepath = "" + Environment.CurrentDirectory + "\\matchCache\\" + id + ".txt";
 
-            foreach (string match in indivMatches) //parse each game string
-            {
-                rawMatchData tempMatch = JsonConvert.DeserializeObject<rawMatchData>(json);
+            String json = System.IO.File.ReadAllText(filepath);
 
-                matches.Add(tempMatch);
-            }
+            rawMatchData match = JsonConvert.DeserializeObject<rawMatchData>(json);
 
-            return matches;
+            return match;
         }
     }
 }

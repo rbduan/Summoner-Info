@@ -1,6 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using System.Net;
+using System.Threading;
 
 namespace Summoner_Info
 {
@@ -18,6 +20,7 @@ namespace Summoner_Info
         private const string REQUEST_BASE = @"https://na.api.pvp.net/api/lol/na/";
         private const string SUMMONER_ID_BY_NAME = @"v1.4/summoner/by-name/";
         private const string RECENT_GAMES_BY_SID = @"v1.3/game/by-summoner/";
+        private const string MATCH_BY_MATCH_ID = @"v2.2/match/";
 
 
 
@@ -44,10 +47,14 @@ namespace Summoner_Info
 
             int sID = dynResponse[lowercaseName].id;
 
-            Debug.WriteLine(sID);
             return sID;
         }
 
+        /// <summary>
+        /// look into using delegates to return 2 lists maybe? KV pairs makes sense for this atm so not urgent
+        /// </summary>
+        /// <param name="sID"></param>
+        /// <returns></returns>
         public static Dictionary<int, int> getRecentMatchlistBySID(int sID)
         {
             Dictionary <int, int> recentMatchesWithChampionId = new Dictionary<int, int>();
@@ -65,8 +72,6 @@ namespace Summoner_Info
                 recentMatchesWithChampionId.Add((int)game.gameId, (int)game.championId);
             }
 
-            Debug.WriteLine(recentMatchesWithChampionId);
-
             return recentMatchesWithChampionId;
         }
 
@@ -80,6 +85,70 @@ namespace Summoner_Info
             return recentMatchesWithChampionId;
         }
 
+        public static Collection<rawMatchData> getMatchesByList(List<int> matchlist)
+        {
+            Collection<rawMatchData> matches = new Collection<rawMatchData>();
 
+            foreach(int matchId in matchlist)
+            {
+                if (matchCached(matchId))
+                    continue;
+                else
+                {
+                    Debug.WriteLine("Downloading Match " + matchId);
+                    downloadMatchByMatchId(matchId);
+                    Thread.Sleep(1100);
+                }                    
+            }
+
+            foreach(int matchId in matchlist)
+            {
+                rawMatchData tempMatch = JSONDeserializer.getMatchObjectFromJSonFileById(matchId);
+
+                matches.Add(tempMatch);
+            }
+
+            return matches;
+        }
+
+        /// <summary>
+        /// may be a better way of doing this idk
+        /// </summary>
+        /// <param name="matchlist"></param>
+        /// <returns></returns>
+        public static Dictionary<rawMatchData, int> getMatchesByDictionary(Dictionary<int, int> matchesWithCID)
+        {
+            List<int> matchIdList = new List<int>();
+            Dictionary<rawMatchData, int> matchDataWithCID = new Dictionary<rawMatchData, int>();
+
+            foreach (KeyValuePair<int, int> match in matchesWithCID)
+                matchIdList.Add(match.Key);
+
+            Collection<rawMatchData> matchDataList = getMatchesByList(matchIdList);
+
+            foreach (rawMatchData match in matchDataList)
+                matchDataWithCID.Add(match, matchesWithCID[match.matchId]);
+
+            return matchDataWithCID;
+        }
+
+        private static void downloadMatchByMatchId(int id)
+        {
+            string request = String.Concat(REQUEST_BASE, MATCH_BY_MATCH_ID, id, API_KEY);
+            string filepath = "" + Environment.CurrentDirectory + "\\matchCache\\" + id + ".txt";
+            WebClient client = new WebClient();
+
+            client.DownloadFile(request, filepath);            
+        }
+
+        private static bool matchCached(int matchId)
+        {
+            string filepath = "" + Environment.CurrentDirectory + "\\matchCache\\" + matchId + ".txt";
+
+            if (File.Exists(filepath))
+                return true;
+
+            return false;
+        }
     }
 }
