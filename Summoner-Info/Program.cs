@@ -15,9 +15,14 @@ namespace Summoner_Info
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new UserInterface());
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new UserInterface());
+
+            //test code for random stuff
+
+            
+
         }
     }
 }

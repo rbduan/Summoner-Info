@@ -8,3 +8,15 @@ c:\users\ryan duan\documents\visual studio 2015\Projects\Summoner-Info\Summoner-
 C:\Users\Ryan Duan\Documents\Visual Studio 2015\Projects\Summoner-Info\Summoner-Info\bin\Debug\Summoner-Info.exe.config
 C:\Users\Ryan Duan\Documents\Visual Studio 2015\Projects\Summoner-Info\Summoner-Info\bin\Debug\Summoner-Info.exe
 C:\Users\Ryan Duan\Documents\Visual Studio 2015\Projects\Summoner-Info\Summoner-Info\obj\Debug\Summoner-Info.exe
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\bin\Debug\Summoner-Info.exe.config
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner-Info.exe
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\bin\Debug\Summoner-Info.exe
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\bin\Debug\Summoner-Info.pdb
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner-Info.csprojResolveAssemblyReference.cache
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner_Info.ScrollableMessageBox.resources
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner_Info.UserInterface.resources
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner_Info.Properties.Resources.resources
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner-Info.csproj.GenerateResource.Cache
+C:\Users\Ryan\Source\Repos\Summoner-Info\Summoner-Info\obj\Debug\Summoner-Info.pdb

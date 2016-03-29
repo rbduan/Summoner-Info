@@ -23,8 +23,8 @@ def getRecentGames(summid):
 def addMatchIdToData(mid_set):
     global global_mid_list
     for match in mid_set:
- #       if match['queue'] == 'TEAM_BUILDER_DRAFT_RANKED_5x5':
-        global_mid_list.append(match['matchId'])
+        if match['queue'] == 'TEAM_BUILDER_DRAFT_RANKED_5x5':
+            global_mid_list.append(match['matchId'])
     global_mid_list = list(OrderedDict.fromkeys(global_mid_list))
 
 def getMatchData(mid_index):
